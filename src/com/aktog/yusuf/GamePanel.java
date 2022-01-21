@@ -7,25 +7,37 @@ import java.util.Arrays;
 
 
 public class GamePanel extends JPanel {
-    final static int PANEL_WIDTH = 800;
-    final static int PANEL_HEIGHT = 600;
-    JPanel hoursPanel;
-    JPanel secondsPanel;
-    ArrayList<JPanel> hourInnerPanels;
-    ArrayList<JPanel> secondsInnerPanels;
+    final static int PANEL_WIDTH = 1800;
+    final static int PANEL_HEIGHT = 800;
+    static int panelCount = 0;
 
-    final String zero = "TTTTT" + "TFFFT" + "TFFFT" + "TFFFT" + "TTTTT";
+    JPanel secondsFirstDigitOuterPanel;
+    JPanel secondsSecondDigitOuterPanel;
+    JPanel minutesFirstDigitOuterPanel;
+    JPanel minutesSecondDigitOuterPanel;
+    JPanel hoursFirstDigitOuterPanel;
+    JPanel hoursSecondDigitOuterPanel;
+
+    ArrayList<JPanel> secondsFirstDigitInnerPanels;
+    ArrayList<JPanel> secondsSecondDigitInnerPanels;
+    ArrayList<JPanel> minutesFirstDigitInnerPanels;
+    ArrayList<JPanel> minutesSecondDigitInnerPanels;
+    ArrayList<JPanel> hoursFirstDigitInnerPanels;
+    ArrayList<JPanel> hoursSecondDigitInnerPanels;
+
+
+    final String zero = "FTTTF" + "FTFTF" + "FTFTF" + "FTFTF" + "FTTTF";
     final String one = "FFTFF" + "FTTFF" + "FFTFF" + "FFTFF" + "FTTTF";
     final String two = "FTTTF" + "FFFTF" + "FTTTF" + "FTFFF" + "FTTTF";
     final String three = "FTTTF" + "FFFTF" + "FTTTF" + " FFTFF" + "TTTFF";
-    final String four = "TFFFT" + "TFFFT" + "TTTTT" + "FFFFT" + "FFFFT";
+    final String four = "FTFTF" + "FTFTF" + "FTTTF" + "FFFTF" + "FFFTF";
     final String five = takeMirrorOfClockStr(two);
-    final String six = "FTTTT" + "FTFFF" + "FTTTT" + "FTFFT" + "FTTTT";
-    final String seven = "TTTTT" + "FFFFT" + "FFFFT" + "FFFFT" + "FFFFT";
-    final String eight = "TTTTT" + "TFFFT" + "TTTTT" + "TFFFT" + "TTTTT";
-    final String nine = "FTTTT" + "FTFFT"+ "FTTTT" + "FFFFT" + "FTTTT";
+    final String six = "FTTTF" + "FTFFF" + "FTTTF" + "FTFTF" + "FTTTF";
+    final String seven = "FTTTF" + "FFFTF" + "FFFTF" + "FFFTF" + "FFFTF";
+    final String eight = "FTTTF" + "FTFTF" + "FTTTF" + "FTFTF" + "FTTTF";
+    final String nine = "FTTTF" + "FTFTF" + "FTTTF" + "FFFTF" + "FTTTF";
 
-    final ArrayList<String> numberRepresentetations =  new ArrayList<>(Arrays.asList(zero, one, two, three, four, five, six, seven, eight, nine));
+    final ArrayList<String> numberRepresentations = new ArrayList<>(Arrays.asList(zero, one, two, three, four, five, six, seven, eight, nine));
 
 
     final static int GRID_SIZE = 25;
@@ -35,81 +47,104 @@ public class GamePanel extends JPanel {
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.setLayout(null);
-        hoursPanel = new JPanel();
-        secondsPanel = new JPanel();
-        hoursPanel.setLocation(75, 50);
-        secondsPanel.setLocation(PANEL_WIDTH / 2 + 50, 50);
 
-        hoursPanel.setSize(PANEL_WIDTH / 2 - 75, PANEL_HEIGHT - 100);
-        secondsPanel.setSize(PANEL_WIDTH / 2 - 100, PANEL_HEIGHT - 100);
+        hoursFirstDigitOuterPanel = new JPanel();
+        hoursFirstDigitInnerPanels = new ArrayList<>();
 
-        hoursPanel.setBackground(Color.gray);
-        secondsPanel.setBackground(Color.gray);
+        hoursSecondDigitOuterPanel = new JPanel();
+        hoursSecondDigitInnerPanels = new ArrayList<>();
 
+        minutesFirstDigitOuterPanel = new JPanel();
+        minutesFirstDigitInnerPanels = new ArrayList<>();
+
+        minutesSecondDigitOuterPanel = new JPanel();
+        minutesSecondDigitInnerPanels = new ArrayList<>();
+
+        secondsFirstDigitOuterPanel = new JPanel();
+        secondsFirstDigitInnerPanels = new ArrayList<>();
+
+        secondsSecondDigitOuterPanel = new JPanel();
+        secondsSecondDigitInnerPanels = new ArrayList<>();
+
+        initPanel(hoursFirstDigitOuterPanel, hoursFirstDigitInnerPanels,25);
+        startThread(360, 2, hoursFirstDigitInnerPanels);
+
+        initPanel(hoursSecondDigitOuterPanel, hoursSecondDigitInnerPanels,275);
+        startThread(36, 10, hoursSecondDigitInnerPanels);
+
+        initPanel(minutesFirstDigitOuterPanel, minutesFirstDigitInnerPanels,625);
+        startThread(6, 6, minutesFirstDigitInnerPanels);
+
+        initPanel(minutesSecondDigitOuterPanel, minutesSecondDigitInnerPanels,875);
+        startThread(0.6, 10, minutesSecondDigitInnerPanels);
+
+        initPanel(secondsFirstDigitOuterPanel, secondsFirstDigitInnerPanels,1225);
+        startThread(0.1, 6, secondsFirstDigitInnerPanels);
+
+        initPanel(secondsSecondDigitOuterPanel, secondsSecondDigitInnerPanels,1475);
+        startThread(0.01, 10, secondsSecondDigitInnerPanels);
+
+
+        this.add(hoursFirstDigitOuterPanel);
+        this.add(hoursSecondDigitOuterPanel);
+        this.add(minutesFirstDigitOuterPanel);
+        this.add(minutesSecondDigitOuterPanel);
+        this.add(secondsFirstDigitOuterPanel);
+        this.add(secondsSecondDigitOuterPanel);
+
+
+    }
+
+    public void initPanel(JPanel panel, ArrayList<JPanel> panels, int x) {
         int dimension = (int) Math.sqrt(GRID_SIZE);
 
-        hoursPanel.setLayout(new GridLayout(dimension, dimension, 10, 10));
-        secondsPanel.setLayout(new GridLayout(dimension, dimension, 10, 10));
+        panel.setLocation(x, 3*PANEL_HEIGHT/8 );
+        panel.setSize(PANEL_WIDTH / 6, PANEL_HEIGHT / 4);
+        panel.setBackground(Color.gray);
+        panel.setLayout(new GridLayout(dimension, dimension, 10, 10));
 
-        hourInnerPanels = new ArrayList<>();
-        secondsInnerPanels = new ArrayList<>();
 
         for (int i = 0; i < GRID_SIZE; i++) {
 
-            JPanel panel = new JPanel();
-            panel.setBackground(Color.gray);
-            hourInnerPanels.add(panel);
-            hoursPanel.add(panel);
-
-            panel = new JPanel();
-            panel.setBackground(Color.gray);
-            secondsInnerPanels.add(panel);
-            secondsPanel.add(panel);
+            JPanel innerPanel = new JPanel();
+            innerPanel.setBackground(Color.gray);
+            panels.add(innerPanel);
+            panel.add(innerPanel);
 
         }
+        panelCount++;
+    }
 
-/*        changeClock(zero, hourInnerPanels);
-        changeClock(zero, secondsInnerPanels);*/
+    public void startThread(double delay, int upperLimit, ArrayList<JPanel> innerPanels) {
+        new Thread(() -> {
+            int i = 0;
+            while (true) {
+                changeClock(numberRepresentations.get(i), innerPanels);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int i = 0;
-                while(true){
-
-                    i++;
-                    if(i == 10){
-                        i = 0;
-                    }
-
-
-                    //changeClock(numberRepresentetations.get(i),hourInnerPanels);
-                    changeClock(numberRepresentetations.get(i),secondsInnerPanels);
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    resetClock();
-                    //repaint();
-
+                try {
+                    Thread.sleep((long) (delay * 1000L));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                resetInnerPanels(innerPanels);
+                i++;
+                if (i == upperLimit) {
+                    i = 0;
                 }
 
             }
-        }).start();
-        this.add(hoursPanel);
-        this.add(secondsPanel);
 
+        }).start();
     }
 
-    public void resetClock(){
+    public void resetInnerPanels(ArrayList<JPanel> panels) {
         for (int i = 0; i < GRID_SIZE; i++) {
-            hourInnerPanels.get(i).setBackground(Color.gray);
-            secondsInnerPanels.get(i).setBackground(Color.gray);
+            panels.get(i).setBackground(Color.gray);
 
 
         }
     }
+
     public void changeClock(String clockStr, ArrayList<JPanel> panels) {
         for (int i = 0; i < GRID_SIZE; i++) {
             if (clockStr.charAt(i) == 'T') {
@@ -125,9 +160,9 @@ public class GamePanel extends JPanel {
         for (int i = 0; i < Math.sqrt(GRID_SIZE); i++) {
             int begin = GRID_SIZE - (i + 1) * 5;
             int end = GRID_SIZE - (i + 1) * 5 + 5;
-            System.out.println("begin: " + begin + " end: " + end);
+            //System.out.println("begin: " + begin + " end: " + end);
             String part = clockStr.substring(begin, end);
-            System.out.println(part);
+            //System.out.println(part);
             str.append(part);
         }
         return str.toString();
